@@ -387,3 +387,77 @@ def consultar_producao_identificada(caminho=CAMINHO_BANCO):
         return pd.read_sql_query(
             "SELECT * FROM vw_producao_identificada", conexao
         )
+
+
+def consultar_estrutura_tabela(
+    caminho_banco: str,
+    nome_tabela: str = "procedimentos_sp",
+) -> list[dict]:
+    """Consulta a estrutura de uma tabela SQLite."""
+
+    import sqlite3
+
+    if not nome_tabela.replace("_", "").isalnum():
+        raise ValueError("Nome de tabela inválido.")
+
+    with sqlite3.connect(caminho_banco) as conexao:
+        cursor = conexao.execute(
+            f'PRAGMA table_info("{nome_tabela}")'
+        )
+        colunas = cursor.fetchall()
+
+    return [
+        {
+            "id": coluna[0],
+            "nome": coluna[1],
+            "tipo": coluna[2],
+            "obrigatorio": bool(coluna[3]),
+            "valor_padrao": coluna[4],
+            "chave_primaria": bool(coluna[5]),
+        }
+        for coluna in colunas
+    ]
+
+
+from pathlib import Path
+import sqlite3
+
+
+def consultar_procedimentos_mensais(
+    ano: int,
+    caminho_banco: str | Path = "data/processed/susprev_sc.db",
+) -> list[dict]:
+    """Consulta os totais mensais de procedimentos eletivos."""
+
+    caminho = Path(caminho_banco)
+
+    if not caminho.is_file():
+        raise FileNotFoundError(
+            f"Banco de dados não encontrado: {caminho}"
+        )
+
+    with sqlite3.connect(caminho) as conexao:
+        registros = conexao.execute(
+            """
+            SELECT
+                ano,
+                mes,
+                SUM(quantidade) AS quantidade
+            FROM procedimentos_sp
+            WHERE ano = ?
+            GROUP BY ano, mes
+            ORDER BY ano, mes
+            """,
+            (ano,),
+        ).fetchall()
+
+    return [
+        {
+            "ano": registro[0],
+            "mes": registro[1],
+            "quantidade": registro[2],
+            "tipo": "observado",
+        }
+        for registro in registros
+    ]
+

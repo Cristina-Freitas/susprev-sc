@@ -1,0 +1,198 @@
+{
+  "versao": 1,
+  "objetos": [
+    [
+      "table",
+      "producao_cirurgica",
+      "producao_cirurgica",
+      "CREATE TABLE producao_cirurgica (\n                id INTEGER PRIMARY KEY AUTOINCREMENT,\n                ano INTEGER NOT NULL,\n                mes INTEGER NOT NULL,\n                tipo_indicador TEXT NOT NULL,\n                municipio_atendimento TEXT NOT NULL,\n                municipio_residencia TEXT NOT NULL,\n                cnes TEXT NOT NULL,\n                procedimento TEXT NOT NULL,\n                quantidade INTEGER NOT NULL CHECK (quantidade >= 0),\n\n                UNIQUE (\n                    ano,\n                    mes,\n                    tipo_indicador,\n                    municipio_atendimento,\n                    municipio_residencia,\n                    cnes,\n                    procedimento\n                )\n            )"
+    ],
+    [
+      "table",
+      "competencias_processadas",
+      "competencias_processadas",
+      "CREATE TABLE competencias_processadas (\n                ano INTEGER NOT NULL,\n                mes INTEGER NOT NULL,\n                tipo_indicador TEXT NOT NULL,\n                processado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n                PRIMARY KEY (ano, mes, tipo_indicador)\n            )"
+    ],
+    [
+      "table",
+      "municipios",
+      "municipios",
+      "CREATE TABLE municipios (\n                codigo TEXT PRIMARY KEY,\n                nome TEXT NOT NULL,\n                uf TEXT,\n                regiao_saude TEXT\n            )"
+    ],
+    [
+      "table",
+      "estabelecimentos",
+      "estabelecimentos",
+      "CREATE TABLE estabelecimentos (\n                cnes TEXT PRIMARY KEY,\n                nome TEXT NOT NULL,\n                municipio_codigo TEXT\n            )"
+    ],
+    [
+      "table",
+      "procedimentos",
+      "procedimentos",
+      "CREATE TABLE procedimentos (\n                codigo TEXT PRIMARY KEY,\n                descricao TEXT NOT NULL\n            )"
+    ],
+    [
+      "index",
+      "idx_producao_municipio",
+      "producao_cirurgica",
+      "CREATE INDEX idx_producao_municipio\n                ON producao_cirurgica(municipio_atendimento)"
+    ],
+    [
+      "index",
+      "idx_producao_cnes",
+      "producao_cirurgica",
+      "CREATE INDEX idx_producao_cnes\n                ON producao_cirurgica(cnes)"
+    ],
+    [
+      "index",
+      "idx_producao_procedimento",
+      "producao_cirurgica",
+      "CREATE INDEX idx_producao_procedimento\n                ON producao_cirurgica(procedimento)"
+    ],
+    [
+      "view",
+      "vw_producao_identificada",
+      "vw_producao_identificada",
+      "CREATE VIEW vw_producao_identificada AS\n            SELECT p.*,\n                   ma.nome AS nome_municipio_atendimento,\n                   mr.nome AS nome_municipio_residencia,\n                   ma.regiao_saude AS regiao_saude_atendimento,\n                   e.nome AS nome_estabelecimento,\n                   pr.descricao AS descricao_procedimento\n              FROM producao_cirurgica AS p\n              LEFT JOIN municipios AS ma ON ma.codigo = p.municipio_atendimento\n              LEFT JOIN municipios AS mr ON mr.codigo = p.municipio_residencia\n              LEFT JOIN estabelecimentos AS e ON e.cnes = p.cnes\n              LEFT JOIN procedimentos AS pr ON pr.codigo = p.procedimento"
+    ],
+    [
+      "view",
+      "procedimentos_cirurgicos_eletivos",
+      "procedimentos_cirurgicos_eletivos",
+      "CREATE VIEW procedimentos_cirurgicos_eletivos AS\n        SELECT\n            ano,\n            mes,\n            municipio_atendimento,\n            municipio_residencia,\n            cnes,\n            procedimento,\n            quantidade\n        FROM producao_cirurgica\n        WHERE tipo_indicador = 'internacoes_cirurgicas_eletivas'\n          AND substr(procedimento, 1, 2) = '04'"
+    ],
+    [
+      "table",
+      "procedimentos_sp",
+      "procedimentos_sp",
+      "CREATE TABLE procedimentos_sp (\n                id INTEGER PRIMARY KEY AUTOINCREMENT,\n                ano INTEGER NOT NULL,\n                mes INTEGER NOT NULL CHECK (mes BETWEEN 1 AND 12),\n                municipio_atendimento TEXT NOT NULL DEFAULT '',\n                cnes TEXT NOT NULL,\n                procedimento TEXT NOT NULL,\n                quantidade INTEGER NOT NULL CHECK (quantidade >= 0),\n                UNIQUE (ano, mes, municipio_atendimento, cnes, procedimento)\n            )"
+    ],
+    [
+      "table",
+      "competencias_sp",
+      "competencias_sp",
+      "CREATE TABLE competencias_sp (\n                ano INTEGER NOT NULL,\n                mes INTEGER NOT NULL CHECK (mes BETWEEN 1 AND 12),\n                processado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,\n                PRIMARY KEY (ano, mes)\n            )"
+    ],
+    [
+      "index",
+      "idx_procedimentos_sp_competencia",
+      "procedimentos_sp",
+      "CREATE INDEX idx_procedimentos_sp_competencia\n            ON procedimentos_sp (ano, mes)\n            "
+    ]
+  ],
+  "tabelas": {
+    "producao_cirurgica": {
+      "colunas": [
+        "id",
+        "ano",
+        "mes",
+        "tipo_indicador",
+        "municipio_atendimento",
+        "municipio_residencia",
+        "cnes",
+        "procedimento",
+        "quantidade"
+      ],
+      "linhas": 528104,
+      "arquivos": [
+        {
+          "nome": "producao_cirurgica_001.csv",
+          "sha256": "2257636e613775ae44104ed47213d3167540260456cdbcd216130a4819ac3288"
+        },
+        {
+          "nome": "producao_cirurgica_002.csv",
+          "sha256": "b9a770136bcb4b7872ba8d37c4ee43d8e033a19fc70fb93e9d86b17542d2828e"
+        }
+      ]
+    },
+    "competencias_processadas": {
+      "colunas": [
+        "ano",
+        "mes",
+        "tipo_indicador",
+        "processado_em"
+      ],
+      "linhas": 92,
+      "arquivos": [
+        {
+          "nome": "competencias_processadas_001.csv",
+          "sha256": "a98f580be8ecbaeaa7045f7ed83a456afae19e4f19acffa43c656d5bde1d5157"
+        }
+      ]
+    },
+    "municipios": {
+      "colunas": [
+        "codigo",
+        "nome",
+        "uf",
+        "regiao_saude"
+      ],
+      "linhas": 295,
+      "arquivos": [
+        {
+          "nome": "municipios_001.csv",
+          "sha256": "5f2a8652866751c579ceb5efa8ca9fbe17bf83bdb7969069da0c7d36a0ae9dd4"
+        }
+      ]
+    },
+    "estabelecimentos": {
+      "colunas": [
+        "cnes",
+        "nome",
+        "municipio_codigo"
+      ],
+      "linhas": 0,
+      "arquivos": [
+        {
+          "nome": "estabelecimentos_001.csv",
+          "sha256": "787bed5f3d2156f20c2c2d7ad2dacf2ea2e0ecc4a271ec61bf19b23286ffe8dd"
+        }
+      ]
+    },
+    "procedimentos": {
+      "colunas": [
+        "codigo",
+        "descricao"
+      ],
+      "linhas": 0,
+      "arquivos": [
+        {
+          "nome": "procedimentos_001.csv",
+          "sha256": "96e883f5efa632cbee43f7879dbab3bfd3427888a7f582886bdad55769d50769"
+        }
+      ]
+    },
+    "procedimentos_sp": {
+      "colunas": [
+        "id",
+        "ano",
+        "mes",
+        "municipio_atendimento",
+        "cnes",
+        "procedimento",
+        "quantidade"
+      ],
+      "linhas": 257361,
+      "arquivos": [
+        {
+          "nome": "procedimentos_sp_001.csv",
+          "sha256": "d797efe9f18f1e140879b934c1682364424d30a7572ef9ebbbc32a39a7289f70"
+        }
+      ]
+    },
+    "competencias_sp": {
+      "colunas": [
+        "ano",
+        "mes",
+        "processado_em"
+      ],
+      "linhas": 92,
+      "arquivos": [
+        {
+          "nome": "competencias_sp_001.csv",
+          "sha256": "2fc91e2d052f06fba61eff10dd2e0a4820e8c8af154fd09ffd3ce3dccf2bfb78"
+        }
+      ]
+    }
+  }
+}
