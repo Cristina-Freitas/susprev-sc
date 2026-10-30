@@ -56,6 +56,39 @@ def criar_tabelas(caminho=CAMINHO_BANCO):
 
         conexao.execute(
             """
+            CREATE TABLE IF NOT EXISTS procedimentos_sp (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ano INTEGER NOT NULL,
+                mes INTEGER NOT NULL CHECK (mes BETWEEN 1 AND 12),
+                municipio_atendimento TEXT NOT NULL DEFAULT '',
+                cnes TEXT NOT NULL,
+                procedimento TEXT NOT NULL,
+                quantidade INTEGER NOT NULL CHECK (quantidade >= 0),
+                UNIQUE (ano, mes, municipio_atendimento, cnes, procedimento)
+            )
+            """
+        )
+
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS competencias_sp (
+                ano INTEGER NOT NULL,
+                mes INTEGER NOT NULL CHECK (mes BETWEEN 1 AND 12),
+                processado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (ano, mes)
+            )
+            """
+        )
+
+        conexao.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_procedimentos_sp_competencia
+            ON procedimentos_sp (ano, mes)
+            """
+        )
+
+        conexao.execute(
+            """
             CREATE TABLE IF NOT EXISTS competencias_processadas (
                 ano INTEGER NOT NULL,
                 mes INTEGER NOT NULL,
@@ -169,6 +202,83 @@ def salvar_producao(
             """,
             (ano, mes, tipo_indicador),
         )
+
+
+COLUNAS_SP = [
+    "ano", "mes", "municipio_atendimento", "cnes", "procedimento", "quantidade"
+]
+
+
+def competencia_sp_processada(ano: int, mes: int, caminho=CAMINHO_BANCO) -> bool:
+    """Indica se a competência SP já foi gravada, inclusive quando vazia."""
+    criar_tabelas(caminho)
+    with conectar_banco(caminho) as conexao:
+        return conexao.execute(
+            "SELECT 1 FROM competencias_sp WHERE ano = ? AND mes = ?",
+            (ano, mes),
+        ).fetchone() is not None
+
+
+def salvar_procedimentos_sp(
+    dados: pd.DataFrame,
+    ano: int,
+    mes: int,
+    caminho=CAMINHO_BANCO,
+) -> None:
+    """Grava uma competência SP atomicamente, sem alterar a produção RD."""
+    if not isinstance(dados, pd.DataFrame):
+        raise TypeError("Os dados SP devem ser um DataFrame.")
+    if not isinstance(ano, int) or not 2008 <= ano <= 2100:
+        raise ValueError("Ano inválido.")
+    if not isinstance(mes, int) or not 1 <= mes <= 12:
+        raise ValueError("Mês inválido.")
+    ausentes = set(COLUNAS_SP) - set(dados.columns)
+    if ausentes:
+        raise ValueError(f"Colunas SP ausentes: {sorted(ausentes)}")
+
+    dados = dados[COLUNAS_SP].copy()
+    if not dados.empty:
+        if dados.isna().any().any():
+            raise ValueError("Existem valores nulos nos dados SP.")
+        if not (dados["ano"].eq(ano).all() and dados["mes"].eq(mes).all()):
+            raise ValueError("Os dados SP não correspondem à competência.")
+        if (dados["quantidade"] < 0).any() or not all(
+            isinstance(v, int) and not isinstance(v, bool) or
+            (hasattr(v, "is_integer") and v.is_integer())
+            for v in dados["quantidade"]
+        ):
+            raise ValueError("Quantidades SP devem ser inteiros não negativos.")
+        if dados[COLUNAS_SP[:-1]].duplicated().any():
+            raise ValueError("Grupos SP duplicados na competência.")
+        for coluna in ("municipio_atendimento", "cnes", "procedimento"):
+            if not dados[coluna].map(lambda v: isinstance(v, str)).all():
+                raise ValueError(f"Campo SP {coluna} deve conter texto.")
+
+    registros = list(dados.itertuples(index=False, name=None))
+    criar_tabelas(caminho)
+    with conectar_banco(caminho) as conexao:
+        conexao.execute(
+            "DELETE FROM procedimentos_sp WHERE ano = ? AND mes = ?", (ano, mes)
+        )
+        conexao.executemany(
+            """INSERT INTO procedimentos_sp
+            (ano, mes, municipio_atendimento, cnes, procedimento, quantidade)
+            VALUES (?, ?, ?, ?, ?, ?)""",
+            registros,
+        )
+        conexao.execute(
+            """INSERT INTO competencias_sp (ano, mes) VALUES (?, ?)
+            ON CONFLICT (ano, mes)
+            DO UPDATE SET processado_em = CURRENT_TIMESTAMP""",
+            (ano, mes),
+        )
+
+
+def consultar_procedimentos_sp(caminho=CAMINHO_BANCO) -> pd.DataFrame:
+    """Consulta o indicador SP separado das internações RD."""
+    criar_tabelas(caminho)
+    with conectar_banco(caminho) as conexao:
+        return pd.read_sql_query("SELECT * FROM procedimentos_sp", conexao)
 
 
 def consultar_producao(caminho=CAMINHO_BANCO):
