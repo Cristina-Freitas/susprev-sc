@@ -1,4 +1,3 @@
-
 import pandas as pd
 
 from src.data.classificacao_sih import filtrar_cirurgias_eletivas
@@ -105,3 +104,68 @@ def consolidar_rd(
     )
 
     return agrupamento[colunas_resultado]
+
+
+# Indicador SP separado do indicador de internações RD.
+COLUNAS_OBRIGATORIAS_SP = {
+    "SP_NAIH", "SP_PROC_REA", "SP_QT_PROC", "SP_CNES"
+}
+
+COLUNAS_RESULTADO_SP = [
+    "ano", "mes", "municipio_atendimento", "cnes",
+    "procedimento", "quantidade"
+]
+
+
+def consolidar_sp(dados: pd.DataFrame, ano: int, mes: int) -> pd.DataFrame:
+    """Conta pares distintos AIH/procedimento cirúrgico/CNES no SP.
+
+    Não representa necessariamente o total de cirurgias individuais.
+    O SP registra serviços profissionais, que podem ter múltiplas linhas
+    para o mesmo procedimento de uma AIH.
+    """
+    if not isinstance(dados, pd.DataFrame):
+        raise TypeError("Os dados devem ser um DataFrame.")
+    if not isinstance(ano, int) or not 2008 <= ano <= 2100:
+        raise ValueError("Ano inválido.")
+    if not isinstance(mes, int) or not 1 <= mes <= 12:
+        raise ValueError("Mês inválido.")
+
+    ausentes = COLUNAS_OBRIGATORIAS_SP - set(dados.columns)
+    if ausentes:
+        raise ValueError(f"Colunas obrigatórias ausentes: {sorted(ausentes)}")
+
+    colunas = list(COLUNAS_OBRIGATORIAS_SP)
+    if "SP_MUN" in dados.columns:
+        colunas.append("SP_MUN")
+    registros = dados[colunas].copy()
+
+    for coluna in ("SP_NAIH", "SP_PROC_REA", "SP_CNES"):
+        registros[coluna] = registros[coluna].astype("string").str.strip().fillna("")
+
+    registros = registros.loc[
+        registros["SP_PROC_REA"].str.startswith("04", na=False)
+        & registros["SP_NAIH"].ne("")
+        & registros["SP_CNES"].ne("")
+    ].copy()
+    if registros.empty:
+        return pd.DataFrame(columns=COLUNAS_RESULTADO_SP)
+
+    registros = registros.drop_duplicates(
+        subset=["SP_NAIH", "SP_PROC_REA", "SP_CNES"]
+    )
+    registros["municipio_atendimento"] = (
+        registros["SP_MUN"].astype("string").str.strip().fillna("")
+        if "SP_MUN" in registros.columns else ""
+    )
+
+    agrupamento = (
+        registros.groupby(
+            ["municipio_atendimento", "SP_CNES", "SP_PROC_REA"],
+            dropna=False
+        ).size().reset_index(name="quantidade")
+    ).rename(columns={"SP_CNES": "cnes", "SP_PROC_REA": "procedimento"})
+    agrupamento.insert(0, "ano", ano)
+    agrupamento.insert(1, "mes", mes)
+    agrupamento["quantidade"] = agrupamento["quantidade"].astype(int)
+    return agrupamento[COLUNAS_RESULTADO_SP]
