@@ -233,8 +233,11 @@ __marimo__/
 data/raw/*
 !data/raw/.gitkeep
 
+# Bancos SQLite locais não serão versionados
 data/processed/*
-!data/processed/.gitkeep
+
+# Versionar os dados necessários à reconstrução
+!data/processed/csv_backup/
 
 # Modelos binários - preservar estrutura
 #models/*
