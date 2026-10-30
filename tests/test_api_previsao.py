@@ -119,3 +119,25 @@ def test_historico_modelo_consistente_com_banco(cliente):
     # últimas oito posições do histórico do modelo.
     assert quantidades_2026 == servico.historico[-8:]
 
+def test_modelo_carregado_uma_vez_no_lifespan(monkeypatch):
+    """Garante um único carregamento do modelo por inicialização."""
+    from app import main as modulo_main
+
+    carregamentos = []
+    servico_original = modulo_main.ServicoPrevisao
+
+    def criar_servico(*args, **kwargs):
+        carregamentos.append(1)
+        return servico_original(*args, **kwargs)
+
+    monkeypatch.setattr(
+        modulo_main, "ServicoPrevisao", criar_servico
+    )
+
+    with TestClient(modulo_main.app) as cliente:
+        assert len(carregamentos) == 1
+
+        cliente.get("/health")
+        cliente.get("/health")
+
+        assert len(carregamentos) == 1
