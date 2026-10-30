@@ -141,3 +141,37 @@ def test_modelo_carregado_uma_vez_no_lifespan(monkeypatch):
         cliente.get("/health")
 
         assert len(carregamentos) == 1
+
+def test_erro_400_regra_negocio(cliente, monkeypatch):
+    """Verifica erro de negócio tratado com HTTP 400."""
+    servico = cliente.app.state.servico_previsao
+
+    def simular_erro(ano):
+        raise ValueError("Regra de negócio inválida.")
+
+    monkeypatch.setattr(servico, "prever_ano", simular_erro)
+
+    resposta = cliente.post("/predict", json={"ano": 2026})
+
+    assert resposta.status_code == 400
+    assert resposta.json()["detail"] == "Regra de negócio inválida."
+
+
+def test_erro_500_falha_interna(monkeypatch):
+    """Verifica HTTP 500 sem expor detalhes internos."""
+    from app.services.previsao import ServicoPrevisao
+
+    def simular_erro(self, ano):
+        raise RuntimeError("Falha interna simulada.")
+
+    monkeypatch.setattr(
+        ServicoPrevisao,
+        "prever_ano",
+        simular_erro,
+    )
+
+    with TestClient(app, raise_server_exceptions=False) as cliente:
+        resposta = cliente.post("/predict", json={"ano": 2026})
+
+    assert resposta.status_code == 500
+    assert "Falha interna simulada" not in resposta.text
