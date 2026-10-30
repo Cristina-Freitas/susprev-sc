@@ -44,4 +44,10 @@ def prever_procedimentos(
             detail="Banco de dados indisponível.",
         ) from erro
 
+    except Exception as erro:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao processar a previsão.",
+        ) from erro
+
     return PrevisaoSaida.model_validate(resultado)
