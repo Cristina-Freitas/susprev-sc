@@ -36,3 +36,36 @@ def test_rejeita_campos_desconhecidos():
 
     with pytest.raises(ValidationError):
         PrevisaoEntrada(ano=2026, campo_invalido=True)
+
+from app.schemas.previsao import PrevisaoMensal
+
+
+@pytest.mark.parametrize("mes", [0, 13])
+def test_rejeita_mes_fora_dos_limites(mes):
+    with pytest.raises(ValidationError):
+        PrevisaoMensal(
+            ano=2026,
+            mes=mes,
+            quantidade=100,
+            tipo="observado",
+        )
+
+
+def test_rejeita_quantidade_negativa():
+    with pytest.raises(ValidationError):
+        PrevisaoMensal(
+            ano=2026,
+            mes=8,
+            quantidade=-1,
+            tipo="observado",
+        )
+
+
+def test_rejeita_texto_em_campo_numerico():
+    with pytest.raises(ValidationError):
+        PrevisaoMensal(
+            ano=2026,
+            mes="agosto",
+            quantidade=100,
+            tipo="observado",
+        )
