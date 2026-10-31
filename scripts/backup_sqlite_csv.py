@@ -44,9 +44,12 @@ def decodificar(valor):
 
 def checksum(caminho):
     h = hashlib.sha256()
+    # Os CSVs são exportados com CRLF pelo csv.writer, mas o Git pode
+    # convertê-los para LF ao criar o ZIP. Calcular o SHA-256 sobre uma
+    # representação CRLF canônica preserva a verificação do conteúdo.
     with caminho.open('rb') as arquivo:
-        for bloco in iter(lambda: arquivo.read(1024 * 1024), b''):
-            h.update(bloco)
+        for linha in arquivo:
+            h.update(linha.replace(b'\r\n', b'\n').replace(b'\n', b'\r\n'))
     return h.hexdigest()
 
 
