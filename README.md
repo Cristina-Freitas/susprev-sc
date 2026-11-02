@@ -36,7 +36,6 @@ Versões conforme o `requirements.txt` do repositório:
 | pytest | 9.1.1 | Testes automatizados |
 | SQLite | Integrado ao Python | Banco de dados local |
 
-**Observação:** o frontend React está planejado, mas não faz parte da execução da API descrita nesta versão do README.
 
 ## 4. Instalação e execução
 
@@ -51,10 +50,9 @@ Versões conforme o `requirements.txt` do repositório:
 ```bash
 git clone https://github.com/Cristina-Freitas/susprev-sc.git
 cd susprev-sc
-git switch develop
 ```
 
-**Alternativa:** baixe o ZIP da branch `develop`, extraia e abra a pasta que contém `requirements.txt`.
+**Alternativa:** baixe o ZIP da branch `main`, extraia e abra a pasta que contém `requirements.txt`.
 
 ### 4.2 Criar e ativar o ambiente virtual
 
@@ -205,13 +203,7 @@ Retorna os valores observados de 2026 e a projeção dos meses restantes.
 - **Reprodutibilidade operacional:** o banco pode ser reconstruído a partir dos CSVs versionados, e a API pode ser executada a partir do ZIP do GitHub.
 - **Limitação:** os resultados não medem diretamente fila de espera, demanda reprimida, desfechos clínicos ou eficiência hospitalar.
 
-## 8. Evidências
-
-O link do vídeo de apresentação será incluído posteriormente, conforme solicitado na entrega.
-
----
-
-## 9. Autora
+## 8. Autora
 
 **Cristina Freitas**
 
