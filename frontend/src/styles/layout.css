@@ -1,0 +1,433 @@
+/* =====================================================================
+   Estrutura da aplicação: menu lateral, cabeçalho, área de conteúdo
+   ===================================================================== */
+
+.app {
+  display: grid;
+  grid-template-columns: var(--largura-menu) minmax(0, 1fr);
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ---------------------------- Menu lateral ---------------------------- */
+.menu {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background:
+    radial-gradient(120% 60% at 0% 0%, rgba(47, 125, 225, 0.22), transparent 60%),
+    linear-gradient(180deg, var(--marinho-800) 0%, var(--marinho-900) 100%);
+  color: #e6eefb;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 40;
+}
+
+.menu__marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 16px 14px;
+}
+
+.menu__logo {
+  flex: none;
+  width: 44px;
+  height: 44px;
+}
+
+.menu__nome {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.menu__nome strong {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.menu__nome span {
+  font-size: var(--fs-xs);
+  color: #a9bddc;
+}
+
+.menu__nav {
+  padding: 6px 10px;
+}
+
+.menu__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.menu__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #d2def2;
+  font-size: var(--fs-md);
+  font-weight: 500;
+  text-align: left;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.menu__item svg {
+  flex: none;
+}
+
+.menu__item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.menu__item[aria-current='page'] {
+  background: linear-gradient(90deg, #2373dc, #1f63bd);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(31, 99, 189, 0.35);
+}
+
+.menu__item:focus-visible {
+  outline-offset: -3px;
+}
+
+.menu__rodape {
+  margin-top: auto;
+  padding: 14px 18px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: var(--fs-sm);
+  color: #a9bddc;
+}
+
+.menu__rodape strong {
+  display: block;
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.menu__rodape ul {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  line-height: 1.6;
+}
+
+.menu__fechar {
+  display: none;
+}
+
+/* ------------------------------ Principal ----------------------------- */
+.principal {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.cabecalho {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: var(--altura-cabecalho);
+  padding: 8px calc(var(--gap) + 6px);
+  background: linear-gradient(90deg, var(--fundo-cabecalho), #f5f8fd 70%);
+  border-bottom: 1px solid var(--borda);
+}
+
+.cabecalho__titulo {
+  display: flex;
+  align-items: baseline;
+  gap: 4px 14px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.cabecalho__titulo h1 {
+  font-size: clamp(1.35rem, 1rem + 1vw, 1.9rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--marinho-800);
+  line-height: 1.1;
+}
+
+.cabecalho__subtitulo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.cabecalho__subtitulo strong {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--marinho-700);
+}
+
+.cabecalho__subtitulo span {
+  font-size: var(--fs-sm);
+  color: var(--texto-secundario);
+}
+
+.cabecalho__acoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.botao-menu {
+  display: none;
+}
+
+.conteudo {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--gap) calc(var(--gap) + 6px);
+  scroll-padding-top: 12px;
+}
+
+.conteudo:focus {
+  outline: none;
+}
+
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  max-width: 1680px;
+  margin: 0 auto;
+}
+
+.pagina__topo {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pagina__titulo {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--marinho-800);
+}
+
+.pagina__descricao {
+  color: var(--texto-secundario);
+  font-size: var(--fs-md);
+  max-width: 80ch;
+}
+
+/* ------------------------------- Grades -------------------------------- */
+.grade-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap);
+}
+
+.grade-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+}
+
+.grade-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gap);
+}
+
+.grade-7-5 {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: var(--gap);
+}
+
+/* ============================ Responsividade ============================ */
+
+/* Notebooks estreitos e tablets em paisagem */
+@media (max-width: 1280px) {
+  :root {
+    --largura-menu: 210px;
+  }
+}
+
+/* Abaixo de 1100px: menu compacto (apenas ícones) e painéis empilhados */
+@media (max-width: 1099px) {
+  :root {
+    --largura-menu: 76px;
+  }
+
+  .menu__nome,
+  .menu__item-texto,
+  .menu__rodape {
+    display: none;
+  }
+
+  .menu__marca {
+    justify-content: center;
+    padding: 16px 8px;
+  }
+
+  .menu__item {
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .grade-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grade-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grade-7-5 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Celulares: menu em gaveta, rolagem natural da página */
+@media (max-width: 767px) {
+  .app {
+    display: block;
+    height: auto;
+    overflow: visible;
+  }
+
+  .principal {
+    overflow: visible;
+  }
+
+  .conteudo {
+    overflow: visible;
+    padding: 12px;
+  }
+
+  .menu {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(84vw, 300px);
+    transform: translateX(-102%);
+    transition: transform 0.2s ease;
+    box-shadow: var(--sombra-forte);
+  }
+
+  .menu--aberto {
+    transform: translateX(0);
+  }
+
+  .menu__nome,
+  .menu__item-texto,
+  .menu__rodape {
+    display: revert;
+  }
+
+  .menu__nome {
+    display: flex;
+  }
+
+  .menu__rodape {
+    display: block;
+  }
+
+  .menu__marca {
+    justify-content: flex-start;
+    padding: 16px;
+  }
+
+  .menu__item {
+    justify-content: flex-start;
+    padding: 12px 14px;
+  }
+
+  .menu__fechar {
+    display: inline-flex;
+    margin-left: auto;
+    border: 0;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fundo-menu {
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 26, 54, 0.45);
+    z-index: 30;
+  }
+
+  .cabecalho {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    flex-wrap: wrap;
+    padding: 10px 12px;
+  }
+
+  .botao-menu {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--borda-forte);
+    background: var(--superficie);
+    color: var(--marinho-800);
+    flex: none;
+  }
+
+  .cabecalho__inicio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .cabecalho__subtitulo span {
+    display: none;
+  }
+
+  .cabecalho__acoes {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .grade-2,
+  .grade-3,
+  .grade-4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+}
+
+@media (min-width: 768px) {
+  .cabecalho__inicio {
+    display: contents;
+  }
+}

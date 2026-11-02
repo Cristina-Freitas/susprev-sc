@@ -1,0 +1,18 @@
+# Fonte: SIGTAP/DATASUS — Tabela Unificada 202608 (sha256 f8ac1cb9ef6d2dd1661eacaa88e26e31ad9d075745e66b83e0d68dab0ec7ffc5); arquivo tb_sub_grupo.txt (grupo+subgrupo)
+codigo;nome
+0401;Pequenas cirurgias e cirurgias de pele, tecido subcutâneo e mucosa
+0402;Cirurgia de glândulas endócrinas
+0403;Cirurgia do sistema nervoso central e periférico
+0404;Cirurgia das vias aéreas superiores, da face, da cabeça e do pescoço
+0405;Cirurgia do aparelho da visão
+0406;Cirurgia do aparelho circulatório
+0407;Cirurgia do aparelho digestivo, orgãos anexos e parede abdominal
+0408;Cirurgia do sistema osteomuscular
+0409;Cirurgia do aparelho geniturinário
+0410;Cirurgia de mama
+0411;Cirurgia obstétrica
+0412;Cirurgia torácica
+0413;Cirurgia reparadora
+0414;Bucomaxilofacial
+0415;Outras cirurgias
+0416;Cirurgia em oncologia
