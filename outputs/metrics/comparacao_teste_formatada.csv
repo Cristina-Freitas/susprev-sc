@@ -1,0 +1,3 @@
+﻿Modelo;MAE;MSE;RMSE;R²
+XGBoost;842,37;870.986;933,27;0,455
+Baseline (último mês);836,25;1.058.881;1.029,02;0,338

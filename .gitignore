@@ -218,3 +218,36 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ==================================================
+# SUSPrev SC - Regras específicas do projeto
+# ==================================================
+
+# Credenciais e configurações locais
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Bases de dados - preservar estrutura
+data/raw/*
+!data/raw/.gitkeep
+
+# Bancos SQLite locais não serão versionados
+data/processed/*
+
+# Versionar os dados necessários à reconstrução
+!data/processed/csv_backup/
+
+# Modelos binários - preservar estrutura
+#models/*
+#!models/.gitkeep
+
+# Frontend React/Vite
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Arquivos temporários do sistema
+.DS_Store
+Thumbs.db
