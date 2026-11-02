@@ -97,11 +97,33 @@ O comando cria `data/processed/susprev_sc.db`. **Não sobrescreve um banco já e
 
 ### 4.5 Iniciar a API
 
+**Executar somente o backend (FastAPI):**
+
 ```bash
 python -m uvicorn app.main:app --reload
 ```
 
-Acesse a documentação interativa em **http://127.0.0.1:8000/docs**.
+A documentação interativa da API estará disponível em **http://127.0.0.1:8000/docs**.
+
+**Executar backend e frontend simultaneamente:**
+
+Após configurar o ambiente Python e instalar as dependências do frontend, execute na raiz do repositório:
+
+```bash
+npm install
+npm --prefix frontend install
+npm run dev
+```
+
+O comando `npm run dev` inicia os dois serviços:
+
+* **Backend FastAPI:** http://127.0.0.1:8000
+* **Frontend React:** http://localhost:5173
+
+Para encerrar os dois servidores, pressione `Ctrl + C` no terminal.
+
+**Observação:** a execução integrada utiliza o `package.json` da raiz e o ambiente virtual `.venv` no Windows. Para informações específicas sobre o dashboard, consulte o [README do frontend](frontend/README.md).
+
 
 ### 4.6 Executar os testes
 
