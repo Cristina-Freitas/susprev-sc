@@ -6,6 +6,14 @@ https://github.com/user-attachments/assets/101ebd08-a355-4499-9a44-5fb349cd0231
 
 
 
+## 🌐 Acesse online
+
+**Aplicação:** https://susprev-sc.onrender.com  
+**Documentação da API (Swagger):** https://susprev-sc.onrender.com/docs
+
+> [!NOTE]
+> A aplicação está hospedada no plano gratuito do Render. Após um período sem acessos, o primeiro carregamento pode levar cerca de 1 minuto. Depois disso, a navegação fica normal.
+
 **Sistema de análise histórica e previsão da produção de procedimentos cirúrgicos eletivos do SUS em Santa Catarina.**
 
 O SUSPrev SC utiliza dados do **SIH/SUS (DATASUS)** para acompanhar a produção de procedimentos e projetar os meses restantes de 2026. Seu objetivo é apoiar análises de evolução da produção assistencial e oferecer informações transparentes à população. **Não estima a fila de espera, o número de pacientes únicos ou o tempo de espera por cirurgia.**
