@@ -25,9 +25,10 @@ export function PaginaEstabelecimentos() {
   if (agregados.estado === 'carregando') return <div className="pagina"><Carregando /></div>;
   if (!ag) return <div className="pagina"><EstadoErro mensagem={agregados.estado === 'erro' ? agregados.erro : 'Dados indisponíveis.'} /></div>;
 
-  const totalEstab = ag.estabelecimentos.length;
-  const semNome = ag.qualidade.estabelecimentos_sem_nome;
-  const todosSemNome = semNome >= totalEstab && totalEstab > 0;
+  // TODO: usar quando os nomes dos estabelecimentos forem preenchidos
+  //const totalEstab = ag.estabelecimentos.length;
+  //const semNome = ag.qualidade.estabelecimentos_sem_nome;
+  //const todosSemNome = semNome >= totalEstab && totalEstab > 0;
 
   return (
     <div className="pagina">
